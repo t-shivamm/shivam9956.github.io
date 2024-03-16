@@ -79,3 +79,25 @@ TFENV_TERRAFORM_VERSION=1.1.0 aws-sso exec --profile 179356486124:TE-Full-Admin 
 	3. Paste this command  -->>  mv /Users/shivamtiwari/Downloads/terraform /usr/local/bin
 	4. Run terraform version command ---> terraform --version to check
 7sa40 
+
+
+
+Git Manual Merge (its need to be done before creating pull request to master branch)
+
+1 -- Checkout to master branch from feature branch 
+  git checkout master/main
+2 -- Now pull the latest changes from remote repository
+like commits made by other user because currently your local master doesn't have updated code 
+  git pull 
+3 -- Now again checkout to feature branch and do the merge (master will be merged to feature branch )
+  git checkout feature/prac-1
+  git merge 
+
+4 Now you can merge your code to master branch without any conflict
+
+
+-- Git Auto merge 
+git tries to merge the master branch automatically but it will be only successfull when the 
+changes are in diffrent lines of code but you
+will run into merge conflicts when same line of code which you change are already changed by other 
+after you cut your feature from master branch -----(GIT AUTO MERGE WILL FAIL)
