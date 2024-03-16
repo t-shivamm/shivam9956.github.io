@@ -1,5 +1,0 @@
-this is dummy file
-
-// This line is for merge conflict change.
-
-master code for merge conflicT
