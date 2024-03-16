@@ -1,6 +1,5 @@
-<<<<<<< HEAD
+
 this is dummy file
 
-// This line is for merge conflict change.
-=======
->>>>>>> main
+
+
