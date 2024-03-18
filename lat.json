@@ -1,0 +1,217 @@
+"targets": {
+                "ASG": {
+                        "resourceType": "aws:ec2:autoscaling-group",
+                        "resourceTags": {
+                                "AzImpairmentPower": "IceAsg"
+                        },
+                        "selectionMode": "ALL"
+                },
+                "ASG-EC2-Instances": {
+                        "resourceType": "aws:ec2:instance",
+                        "resourceTags": {
+                                "AzImpairmentPower": "IceAsg"
+                        },
+                        "filters": [
+                                {
+                                        "path": "State.Name",
+                                        "values": [
+                                                "running"
+                                        ]
+                                },
+                                {
+                                        "path": "Placement.AvailabilityZone",
+                                        "values": [
+                                                "eu-west-1a"
+                                        ]
+                                }
+                        ],
+                        "selectionMode": "ALL"
+                },
+                "EBS-Volumes": {
+                        "resourceType": "aws:ec2:ebs-volume",
+                        "resourceTags": {
+                                "AzImpairmentPower": "ApiPauseVolume"
+                        },
+                        "filters": [
+                                {
+                                        "path": "Attachments.DeleteOnTermination",
+                                        "values": [
+                                                "false"
+                                        ]
+                                }
+                        ],
+                        "selectionMode": "COUNT(1)",
+                        "parameters": {
+                                "availabilityZoneIdentifier": "eu-west-1a"
+                        }
+                },
+                "EC2-Instances": {
+                        "resourceType": "aws:ec2:instance",
+                        "resourceTags": {
+                                "AzImpairmentPower": "StopInstances"
+                        },
+                        "filters": [
+                                {
+                                        "path": "State.Name",
+                                        "values": [
+                                                "running"
+                                        ]
+                                },
+                                {
+                                        "path": "Placement.AvailabilityZone",
+                                        "values": [
+                                                "eu-west-1a"
+                                        ]
+                                }
+                        ],
+                        "selectionMode": "ALL"
+                },
+                "ElastiCache-Cluster": {
+                        "resourceType": "aws:elasticache:redis-replicationgroup",
+                        "resourceTags": {
+                                "AzImpairmentPower": "DisruptElasticache"
+                        },
+                        "selectionMode": "ALL",
+                        "parameters": {
+                                "availabilityZoneIdentifier": "eu-west-1a"
+                        }
+                },
+                "IAM-role": {
+                        "resourceType": "aws:iam:role",
+                        "resourceArns": [
+                                "arn:aws:iam::179356486124:role/service-role/AmazonEC2RunCommandRoleForManagedInstances",
+                                "arn:aws:iam::179356486124:role/AmazonSSMRoleForAutomationAssumeQuickSetup",
+                                "arn:aws:iam::179356486124:role/AmazonSSMRoleForInstancesQuickSetup",
+                                "arn:aws:iam::179356486124:role/service-role/AWSFISIAMRole-1710753384484"
+                        ],
+                        "selectionMode": "ALL"
+                },
+                "RDS-Cluster": {
+                        "resourceType": "aws:rds:cluster",
+                        "resourceTags": {
+                                "AzImpairmentPower": "DisruptRds"
+                        },
+                        "selectionMode": "ALL",
+                        "parameters": {
+                                "writerAvailabilityZoneIdentifiers": "eu-west-1a"
+                        }
+                },
+                "Subnet": {
+                        "resourceType": "aws:ec2:subnet",
+                        "resourceTags": {
+                                "AzImpairmentPower": "DisruptSubnet"
+                        },
+                        "filters": [
+                                {
+                                        "path": "AvailabilityZone",
+                                        "values": [
+                                                "eu-west-1a"
+                                        ]
+                                }
+                        ],
+                        "selectionMode": "ALL"
+                }
+        },
+        "actions": {
+                "Failover-RDS": {
+                        "actionId": "aws:rds:failover-db-cluster",
+                        "parameters": {},
+                        "targets": {
+                                "Clusters": "RDS-Cluster"
+                        }
+                },
+                "Pause-ASG-Scaling": {
+                        "actionId": "aws:ec2:asg-insufficient-instance-capacity-error",
+                        "parameters": {
+                                "availabilityZoneIdentifiers": "eu-west-1a",
+                                "duration": "PT30M",
+                                "percentage": "100"
+                        },
+                        "targets": {
+                                "AutoScalingGroups": "ASG"
+                        }
+                },
+                "Pause-EBS-IO": {
+                        "actionId": "aws:ebs:pause-volume-io",
+                        "parameters": {
+                                "duration": "PT30M"
+                        },
+                        "targets": {
+                                "Volumes": "EBS-Volumes"
+                        },
+                        "startAfter": [
+                                "Stop-Instances",
+                                "Stop-ASG-Instances"
+                        ]
+                },
+                "Pause-ElastiCache": {
+                        "actionId": "aws:elasticache:interrupt-cluster-az-power",
+                        "parameters": {
+                                "duration": "PT30M"
+                        },
+                        "targets": {
+                                "ReplicationGroups": "ElastiCache-Cluster"
+                        }
+                },
+                "Pause-Instance-Launches": {
+                        "actionId": "aws:ec2:api-insufficient-instance-capacity-error",
+                        "parameters": {
+                                "availabilityZoneIdentifiers": "eu-west-1a",
+                                "duration": "PT30M",
+                                "percentage": "100"
+                        },
+                        "targets": {
+                                "Roles": "IAM-role"
+                        }
+                },
+                "Pause-network-connectivity": {
+                        "actionId": "aws:network:disrupt-connectivity",
+                        "parameters": {
+                                "duration": "PT2M",
+                                "scope": "all"
+                        },
+                        "targets": {
+                                "Subnets": "Subnet"
+                        }
+                },
+                "Stop-ASG-Instances": {
+                        "actionId": "aws:ec2:stop-instances",
+                        "parameters": {
+                                "completeIfInstancesTerminated": "true",
+                                "startInstancesAfterDuration": "PT30M"
+                        },
+                        "targets": {
+                                "Instances": "ASG-EC2-Instances"
+                        }
+                },
+                "Stop-Instances": {
+                        "actionId": "aws:ec2:stop-instances",
+                        "parameters": {
+                                "completeIfInstancesTerminated": "true",
+                                "startInstancesAfterDuration": "PT30M"
+                        },
+                        "targets": {
+                                "Instances": "EC2-Instances"
+                        }
+                }
+        },
+        "stopConditions": [
+                {
+                        "source": "none"
+                }
+        ],
+        "roleArn": "arn:aws:iam::179356486124:role/service-role/AWSFISIAMRole-1710753384484",
+        "tags": {
+                "Name": "AZ Availability: Power Interruption"
+        },
+        "logConfiguration": {
+                "cloudWatchLogsConfiguration": {
+                        "logGroupArn": "arn:aws:logs:eu-west-1:179356486124:log-group:aws-fis-uat:*"
+                },
+                "logSchemaVersion": 2
+        },
+        "experimentOptions": {
+                "accountTargeting": "single-account",
+                "emptyTargetResolutionMode": "skip"
+        }
+}'
