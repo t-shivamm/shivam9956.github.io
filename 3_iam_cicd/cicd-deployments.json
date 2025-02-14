@@ -1,0 +1,114 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DynamoDBPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DescribeReservedCapacity",
+                "dynamodb:ListTables",
+                "dynamodb:PurchaseReservedCapacityOfferings",
+                "dynamodb:DescribeLimits",
+                "dynamodb:DescribeReservedCapacityOfferings",
+                "dynamodb:ListBackups",
+                "dynamodb:ListStreams",
+                "dynamodb:ListContributorInsights",
+                "dynamodb:ListGlobalTables"
+            ],
+            "Resource": "arn:aws:dynamodb:eu-west-1:179356486124:table/TE-APP-DEPLOYMENT"
+        },
+        {
+            "Sid": "ASGPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingNotificationTypes",
+                "autoscaling:BatchPutScheduledUpdateGroupAction",
+                "autoscaling:DescribeScalingProcessTypes",
+                "autoscaling:EnterStandby",
+                "autoscaling:DescribePolicies",
+                "autoscaling:ExecutePolicy",
+                "autoscaling:PutScheduledUpdateGroupAction",
+                "autoscaling:DescribeAdjustmentTypes",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:UpdateAutoScalingGroup",
+                "autoscaling:DescribeNotificationConfigurations",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "autoscaling:PutNotificationConfiguration",
+                "autoscaling:DeleteTags",
+                "autoscaling:BatchDeleteScheduledAction",
+                "autoscaling:ResumeProcesses",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:DescribeTags",
+                "autoscaling:DetachLoadBalancerTargetGroups",
+                "autoscaling:SuspendProcesses",
+                "autoscaling:DescribeMetricCollectionTypes",
+                "autoscaling:DescribeLoadBalancers",
+                "autoscaling:AttachLoadBalancerTargetGroups",
+                "autoscaling:AttachInstances",
+                "autoscaling:CreateOrUpdateTags",
+                "autoscaling:DeleteAutoScalingGroup",
+                "autoscaling:DeleteLifecycleHook",
+                "autoscaling:CreateAutoScalingGroup",
+                "autoscaling:DeleteScheduledAction",
+                "autoscaling:DetachInstances",
+                "autoscaling:RecordLifecycleActionHeartbeat",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:ExitStandby",
+                "autoscaling:DescribeTerminationPolicyTypes",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DeletePolicy",
+                "autoscaling:DescribeScalingActivities",
+                "autoscaling:PutScalingPolicy",
+                "autoscaling:DescribeAccountLimits",
+                "autoscaling:DescribeScheduledActions",
+                "autoscaling:DescribeLoadBalancerTargetGroups",
+                "autoscaling:DeleteNotificationConfiguration",
+                "autoscaling:SetInstanceHealth",
+                "autoscaling:DescribeLifecycleHookTypes",
+                "autoscaling:AttachLoadBalancers",
+                "autoscaling:DetachLoadBalancers",
+                "autoscaling:EnableMetricsCollection",
+                "autoscaling:PutLifecycleHook",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:CreateLaunchConfiguration",
+                "autoscaling:CompleteLifecycleAction",
+                "autoscaling:DisableMetricsCollection",
+                "autoscaling:DeleteLaunchConfiguration",
+                "autoscaling:SetInstanceProtection"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "ELBPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "S3BucketPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::sitecode.prod.te-general.com",
+                "arn:aws:s3:::te-sitecore-deployments-prod"
+            ]
+        },
+        {
+            "Sid": "s3ObjectPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::sitecode.prod.te-general.com/*",
+                "arn:aws:s3:::te-sitecore-deployments-prod/*"
+            ]
+        }
+    ]
+}
