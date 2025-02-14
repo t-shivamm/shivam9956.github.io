@@ -1,0 +1,3 @@
+variable "tfAwsRegion" {
+  type = string
+}
